@@ -41,7 +41,7 @@
           </span>
           <input
             id="password"
-            type="password"
+            [type]="hidePassword ? 'password' : 'text'"
             placeholder="********"
             autocomplete="current-password"
             formControlName="password"
@@ -50,6 +50,7 @@
             type="button"
             class="toggle-password"
             aria-label="Mostrar u ocultar contrasena"
+            (click)="togglePasswordVisibility()"
           >
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.8"/>

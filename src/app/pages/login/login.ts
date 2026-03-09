@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 })
 
 export class Login {
+  hidePassword = true;
 
   private fb = inject(FormBuilder)
   private auth = inject(AuthService)
@@ -38,5 +39,9 @@ export class Login {
       return;
     }
 
+  }
+
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
   }
 }
