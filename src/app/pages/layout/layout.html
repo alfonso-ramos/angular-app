@@ -2,9 +2,18 @@
   <header class="header">
     <p class="header-title">Sistema</p>
 
-    <div class="avatar">
-      {{ initials }}
-    </div>
+    <button class="avatar" matButton [matMenuTriggerFor]="menu">{{ initials }}</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item disabled>
+        <mat-icon>person</mat-icon>
+        <span>{{ authService.currentUser()?.name }}</span>
+      </button> <br>
+      <button mat-menu-item (click)="authService.logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Cerrar sesion</span>
+      </button>
+    </mat-menu>
+
   </header>
 
   <aside class="sidebar">

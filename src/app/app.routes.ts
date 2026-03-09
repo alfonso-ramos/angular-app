@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './guards/auth-guard';
-import { Alumnos } from './pages/alumnos/alumnos';
 
 export const routes: Routes = [
   {
@@ -17,6 +16,16 @@ export const routes: Routes = [
         path: 'alumnos',
         canActivate: [authGuard],
         loadComponent: () => import('./pages/alumnos/alumnos').then((m) => m.Alumnos)
+      },
+      {
+        path: 'maestros',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/maestros/maestros').then((m) => m.Maestros)
+      },
+      {
+        path: 'calificaciones',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/calificaciones/calificaciones').then((m) => m.Calificaciones)
       },
       {
         path: '',

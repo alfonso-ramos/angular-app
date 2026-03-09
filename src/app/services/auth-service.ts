@@ -1,4 +1,5 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 export interface SessionUser {
   id: number,
@@ -10,6 +11,8 @@ export interface SessionUser {
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly router = inject(Router)
+
   mockUser: any[] = [
     {id: 1, name: "José Ramos", email: "correo@gmail.com", password: "123456"},
     {id: 2, name: "Alfonso", email: "correo@hotmail.com", password: "asdfgh"},
@@ -53,18 +56,17 @@ export class AuthService {
   logout(): void {
     this._currentUser.set(null)
     localStorage.removeItem(this.storageHey)
+    this.router.navigateByUrl('/login')
   }
 
   getInitials(): string {
     const user = this.currentUser();
     if (!user || !user.name) return '';
 
-    const parts = user.name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return '';
+    const name = user.name.trim();
+    const firstInitial = name.charAt(0).toUpperCase();
+    const secondInitial = name.includes(' ') ? name.split(' ')[1].charAt(0).toUpperCase() : '';
 
-    const first = parts[0].charAt(0).toUpperCase();
-    const second = parts.length > 1 ? parts[parts.length - 1].charAt(0).toUpperCase() : '';
-
-    return first + second;
+    return firstInitial + secondInitial;
   }
 }
