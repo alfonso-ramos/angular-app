@@ -4,7 +4,7 @@ import 'dotenv/config';
 import authRouter from './routes/auth.routes.js'
 
 const app = express()
-const PORT = 3001
+const PORT = 3000
 
 app.use(cors())
 app.use(express.json())

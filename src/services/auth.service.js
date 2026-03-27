@@ -29,16 +29,21 @@ const login = async ({ email, password }) => {
 
   return {
     message: "Login correcto",
-    token
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }
   }
 }
 
-const register = async({email, name, password}) => {
+const register = async ({ email, name, password }) => {
   const userExist = await prisma.users.findUnique({
-    where: {email}
+    where: { email }
   })
 
-  if(userExist){
+  if (userExist) {
     throw new Error("El correo ya está registrado")
   }
 
@@ -54,15 +59,15 @@ const register = async({email, name, password}) => {
 
   return {
     message: "Usuario registrado correctamente",
-    user : {
+    user: {
       id: user.id,
       name: user.name,
       email: user.email
     }
   }
-} 
+}
 
-const getUsers = async() => {
+const getUsers = async () => {
   return await prisma.users.findMany({
     select: {
       id: true,
@@ -72,9 +77,9 @@ const getUsers = async() => {
   })
 }
 
-const getUserById = async(id) => {
+const getUserById = async (id) => {
   const user = await prisma.users.findUnique({
-    where: {id: Number(id)},
+    where: { id: Number(id) },
     select: {
       id: true,
       name: true,
@@ -82,7 +87,7 @@ const getUserById = async(id) => {
     }
   })
 
-  if(!user) {
+  if (!user) {
     throw new Error("Usuario no encontrado")
   }
 
@@ -92,36 +97,36 @@ const getUserById = async(id) => {
   }
 }
 
-const updateUser = async(id, {name, email, password}) => {
+const updateUser = async (id, { name, email, password }) => {
 
-  if(!id) {
+  if (!id) {
     throw new Error("Id de usuario es requerido")
   }
 
   const userExist = await prisma.users.findUnique({
-    where: {id: Number(id)}
+    where: { id: Number(id) }
   })
 
-  if(!userExist) {
+  if (!userExist) {
     throw new Error("Usuario no encontrado")
   }
 
   const updateData = {}
 
-  if(name) {
+  if (name) {
     updateData.name = name
   }
 
-  if(email) {
+  if (email) {
     updateData.email = email
   }
 
-  if(password) {
+  if (password) {
     updateData.password = await bcrypt.hash(password, 10)
   }
 
   const user = await prisma.users.update({
-    where: {id: Number(id)},
+    where: { id: Number(id) },
     data: updateData
   })
 
@@ -136,21 +141,21 @@ const updateUser = async(id, {name, email, password}) => {
   }
 }
 
-const deleteUser = async(id) => {
-  if(!id) {
+const deleteUser = async (id) => {
+  if (!id) {
     throw new Error("Id de usuario es requerido")
   }
 
   const userExist = await prisma.users.findUnique({
-    where: {id: Number(id)}
+    where: { id: Number(id) }
   })
 
-  if(!userExist) {
+  if (!userExist) {
     throw new Error("Usuario no encontrado")
   }
 
   await prisma.users.delete({
-    where: {id: Number(id)}
+    where: { id: Number(id) }
   })
 
   return {
@@ -160,7 +165,7 @@ const deleteUser = async(id) => {
 }
 
 export default {
-  login, 
+  login,
   register,
   getUsers,
   getUserById,
