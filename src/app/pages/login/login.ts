@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -24,21 +25,17 @@ export class Login {
   })
 
   onSubmit(){
-    // if(this.form.invalid){
-    //   this.form.markAllAsDirty()
-    //   return
-    // }
-
     console.log(this.form.value)
 
     const { email, password } = this.form.getRawValue()
-    const valid = this.auth.Login(email!, password!)
-
-    if(valid){
-      this.router.navigateByUrl('/home')
-      return;
-    }
-
+    this.auth.Login(email!,password!)
+      .subscribe({
+        next: () => this.router.navigateByUrl('/home'),
+        error: (error: HttpErrorResponse) => {
+          console.log(error)
+          console.log(error.status)
+        }
+      })
   }
 
   togglePasswordVisibility(): void {

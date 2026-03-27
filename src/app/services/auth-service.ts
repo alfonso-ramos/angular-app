@@ -1,5 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../environment/environment';
+import { map, Observable, tap } from 'rxjs';
 
 export interface SessionUser {
   id: number,
@@ -7,44 +10,41 @@ export interface SessionUser {
   email: string
 }
 
+interface LoginResponse {
+  message: string,
+  token: string,
+  user: SessionUser
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly router = inject(Router)
+  // private readonly router = inject(Router)
+  private http = inject(HttpClient)
 
-  mockUser: any[] = [
-    {id: 1, name: "José Ramos", email: "correo@gmail.com", password: "123456"},
-    {id: 2, name: "Alfonso", email: "correo@hotmail.com", password: "asdfgh"},
-  ]
-
-  private readonly storageHey = 'session_user'
+  private readonly storageKey = 'session_user'
+  private readonly storageKeyToken = "session_token"
+  private readonly loginUrl = `${environment.apiUrl}/auth/login`
 
   private readonly _currentUser = signal<SessionUser | null>(this.readFromStorage())
-
   readonly currentUser = computed(() => this._currentUser())
   readonly isAuthenticated = computed(() => this._currentUser() !== null)
+  router: any;
 
-  Login(email: string, password: string){
-    const exist = this.mockUser.find(user => user.email.toLowerCase() === email.toLowerCase().trim() && user.password.toLowerCase() === password.toLowerCase().trim())
-
-    if(!exist) return false
-
-    const sessionUser: SessionUser = {
-      id: exist.id,
-      name: exist.name,
-      email: exist.email
-    }
-
-    localStorage.setItem(this.storageHey, JSON.stringify(sessionUser))
-
-    this._currentUser.set(sessionUser)
-
-    return true
+  Login(email: string, password: string) : Observable<SessionUser>{
+    return this.http.post<LoginResponse>(this.loginUrl, { email, password }).pipe(
+      tap((response) => {
+        localStorage.setItem(this.storageKey, JSON.stringify(response.user))
+        localStorage.setItem(this.storageKeyToken, response.token)
+        this._currentUser.set(response.user)
+      }),
+      map((response) => response.user)
+    )
   }
 
   readFromStorage(){
-    const user = localStorage.getItem(this.storageHey)
+    const user = localStorage.getItem(this.storageKey)
     if(!user) return null
     try {
       return JSON.parse(user) as SessionUser
@@ -55,7 +55,8 @@ export class AuthService {
 
   logout(): void {
     this._currentUser.set(null)
-    localStorage.removeItem(this.storageHey)
+    localStorage.removeItem(this.storageKey)
+    localStorage.removeItem(this.storageKeyToken)
     this.router.navigateByUrl('/login')
   }
 
