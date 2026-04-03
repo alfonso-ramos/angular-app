@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 const login = async ({ email, password }) => {
-  const user = await prisma.users.findUnique({
+  const user = await getUserByIdprisma.users.findUnique({
     where: { email }
   })
 
@@ -160,7 +160,6 @@ const deleteUser = async (id) => {
 
   return {
     message: "Usuario eliminado correctamente",
-
   }
 }
 
