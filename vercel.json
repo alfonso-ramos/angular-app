@@ -6,13 +6,14 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "handle": "filesystem"
+      "source": "/docs/(.*)",
+      "destination": "/docs/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "src/demo-app.js"
+      "source": "/(.*)",
+      "destination": "/src/demo-app.js"
     }
   ],
   "env": {
