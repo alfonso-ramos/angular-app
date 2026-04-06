@@ -13,6 +13,7 @@ API REST construida con Node.js, Express y Prisma ORM para gestión de usuarios,
 1. Clonar el repositorio:
 ```bash
 git clone <repository-url>
+cd practica6
 ```
 
 2. Instalar dependencias:
@@ -50,7 +51,7 @@ npm run dev
 # o con bun
 bun run dev
 ```
-La API se ejecutará en `http://localhost:3000`
+La API se ejecutará en `http://localhost:3001`
 
 ### Modo Producción
 ```bash
@@ -62,7 +63,7 @@ bun start
 ## Documentación API
 
 Una vez iniciado el servidor, accede a la documentación Swagger en:
-`http://localhost:3000/api-docs`
+`http://localhost:3001/docs`
 
 ## Endpoints Principales
 
