@@ -2,18 +2,26 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/simple-app.js",
+      "src": "src/docs-app.js",
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/docs",
-      "destination": "/src/simple-app.js"
+      "src": "/docs/swagger-ui.css",
+      "dest": "/node_modules/swagger-ui-dist/swagger-ui.css"
     },
     {
-      "source": "/(.*)",
-      "destination": "/src/simple-app.js"
+      "src": "/docs/swagger-ui-bundle.js",
+      "dest": "/node_modules/swagger-ui-dist/swagger-ui-bundle.js"
+    },
+    {
+      "src": "/docs/swagger-ui-standalone-preset.js",
+      "dest": "/node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/docs-app.js"
     }
   ],
   "env": {
