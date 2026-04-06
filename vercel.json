@@ -2,18 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/demo-app.js",
+      "src": "src/simple-app.js",
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/docs/(.*)",
-      "destination": "/docs/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/src/demo-app.js"
+      "src": "/(.*)",
+      "dest": "src/simple-app.js"
     }
   ],
   "env": {
