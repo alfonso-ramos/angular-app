@@ -1,32 +1,69 @@
 import express from 'express'
 import authController from '../controllers/auth.controller.js'
-import alumnosController from '../controllers/alumnos.controller.js'
-import profesoresController from '../controllers/profesores.controller.js'
-import verifyToken from '../middlewares/auth.middleware.js'
+import { validateLogin, validateRegister } from '../middlewares/validation.middleware.js'
 
 const router = express.Router()
 
-router.post("/login", authController.login)
-router.post("/register", authController.register)
-router.get("/users", authController.getUsers)
-router.get("/users/:id", verifyToken ,authController.getUserById)
-router.put("/users/:id", authController.updateUser)
-router.delete("/users/:id", authController.deleteUser)
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Inicia sesión de usuario
+ *     tags: [Autenticación]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Login exitoso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       401:
+ *         description: Credenciales inválidas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post("/login", validateLogin, authController.login)
 
-// alumnos
-router.post("/alumnos", alumnosController.createAlumno)
-router.get("/alumnos", alumnosController.getAlumnos)
-router.get("/alumnos/:id", alumnosController.getAlumnoById)
-router.post("/alumnos/:id", alumnosController.updateAlumno)
-router.delete("/alumnos/:id", alumnosController.deleteAlumno)
-
-// profesores
-router.post("/profesores", profesoresController.createProfesor)
-router.get("/profesores", profesoresController.getProfesores)
-router.get("/profesores/:id", profesoresController.getProfesorById)
-router.post("/profesores/:id", profesoresController.updateProfesor)
-router.delete("/profesores/:id", profesoresController.deleteProfesor)
-
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Registra un nuevo usuario
+ *     tags: [Autenticación]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Usuario registrado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post("/register", validateRegister, authController.register)
 
 export default router
 

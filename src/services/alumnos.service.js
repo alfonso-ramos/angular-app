@@ -2,7 +2,20 @@ import prisma from "../config/prisma.js"
 import bcrypt from "bcryptjs"
 
 const createAlumno = async ({ name, lastname, degree }) => {
-  const generatedEnrollment = `${name[0] + lastname[0]}2024123`
+  const currentYear = new Date().getFullYear()
+  const randomNumbers = Math.floor(1000 + Math.random() * 9000) // 4 números random
+  let generatedEnrollment = `${name[0] + lastname[0]}${currentYear}${randomNumbers}`
+  
+  const existingAlumno = await prisma.alumno.findFirst({
+    where: { enrollment: generatedEnrollment }
+  })
+
+  if (existingAlumno) {
+    // Generar nuevo enrollment si ya existe
+    const newRandomNumbers = Math.floor(1000 + Math.random() * 9000)
+    generatedEnrollment = `${name[0]}${lastname[0]}${currentYear}${newRandomNumbers}`
+  }
+
   const generatedEmail = generatedEnrollment + "@universidad.mx"
   const alumno = await prisma.alumno.create({
     data: {

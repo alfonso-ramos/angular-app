@@ -1,57 +1,47 @@
 import alumnosService from "../services/alumnos.service.js";
 
-const createAlumno = async (req, res) => {
+const createAlumno = async (req, res, next) => {
   try {
     const result = await alumnosService.createAlumno(req.body)
-    res.json(result)
+    res.status(201).json(result)
   } catch (error) {
-    res.status(400).json({
-      message: error.message
-    })
+    next(error)
   }
 }
 
-const getAlumnos = async (req, res) => {
+const getAlumnos = async (req, res, next) => {
   try {
     const result = await alumnosService.getAlumnos()
     res.json(result)
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    })
+    next(error)
   }
 }
 
-const getAlumnoById = async (req, res) => {
+const getAlumnoById = async (req, res, next) => {
   try {
     const result = await alumnosService.getAlumnoById(req.params.id)
     res.json(result)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 }
 
-const updateAlumno = async (req, res) => {
+const updateAlumno = async (req, res, next) => {
   try {
     const result = await alumnosService.updateAlumno(req.params.id, req.body)
     res.json(result)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 }
 
-const deleteAlumno = async (req, res) => {
+const deleteAlumno = async (req, res, next) => {
   try {
     const result = await alumnosService.deleteAlumno(req.params.id)
     res.json(result)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 }
 
