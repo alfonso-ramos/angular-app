@@ -8,8 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/docs/(.*)",
-      "dest": "/docs/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
