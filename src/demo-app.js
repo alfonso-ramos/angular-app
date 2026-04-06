@@ -6,11 +6,13 @@ import { specs } from './config/swagger.js'
 const app = express()
 const PORT = process.env.PORT || 3001
 
-// Documentación Swagger
+// Documentación Swagger con CDN
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, {
   explorer: true,
   customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'API Universidad'
+  customSiteTitle: 'API Universidad',
+  customJs: 'https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js',
+  customCssUrl: 'https://unpkg.com/swagger-ui-dist@5/swagger-ui.css'
 }))
 
 app.use(cors())
@@ -37,7 +39,7 @@ app.get('/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`📚 Demo API funcionando en puerto ${PORT}`)
-  console.log(`📖 Documentación: https://tu-url.vercel.app/docs`)
+  console.log(`📖 Documentación: https://escuelabackend.vercel.app/docs`)
 })
 
 export default app
