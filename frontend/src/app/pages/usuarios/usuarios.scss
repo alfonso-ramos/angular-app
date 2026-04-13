@@ -1,0 +1,105 @@
+.main-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 40px 40px 40px;
+}
+
+.card {
+    background-color: #dfdfdf;
+    border-radius: 24px;
+    padding: 32px;
+}
+
+.mt-24 {
+    margin-top: 24px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #444;
+    margin: 0 0 4px 0;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 24px 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.form-field {
+    width: 100%;
+}
+
+.form-field-password {
+    width: 100%;
+    grid-column: 1 / 2;
+}
+
+::ng-deep .mat-mdc-form-field-hint {
+    color: #666 !important;
+}
+
+.form-messages {
+    grid-column: 1 / -1;
+}
+
+.error-message {
+    color: #f44336;
+    font-size: 14px;
+    margin: 0;
+}
+
+.success-message {
+    color: #4caf50;
+    font-size: 14px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.rounded-btn {
+    border-radius: 20px !important;
+    padding: 0 24px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+.guardar-btn {
+    background-color: #ebf1ff !important;
+    color: #4963a7 !important;
+}
+
+.limpiar-btn {
+    border-color: #999 !important;
+    color: #666 !important;
+}
+
+.users-table {
+    width: 100%;
+    margin-top: 16px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+::ng-deep .users-table th.mat-mdc-header-cell {
+    background-color: transparent;
+    border-bottom-color: #ccc;
+    color: #555;
+    font-weight: 600;
+}
+
+::ng-deep .users-table td.mat-mdc-cell {
+    border-bottom-color: #ccc;
+}

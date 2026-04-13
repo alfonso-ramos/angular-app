@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model users {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(100)
+  email    String @unique(map: "email") @db.VarChar(150)
+  password String @db.VarChar(255)
+}
+
+model alumno {
+  id         Int    @id @default(autoincrement())
+  name       String @db.VarChar(100)
+  lastname   String @db.VarChar(100)
+  enrollment String @db.VarChar(10) // matricula
+  degree     String @db.VarChar(255)  // Carrera
+  email      String @db.VarChar(255)
+  semester   Int    @db.Int
+}
+
+model profesores {
+  id         Int    @id @default(autoincrement())
+  name       String @db.VarChar(100)
+  lastname   String @db.VarChar(100)
+  employee_id String @db.VarChar(10) // matricula
+  department String @db.VarChar(100)
+  speciality String @db.VarChar(100)
+  email      String @db.VarChar(255)
+}

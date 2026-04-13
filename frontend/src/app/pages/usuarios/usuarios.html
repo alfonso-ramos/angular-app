@@ -1,0 +1,96 @@
+<div class="main-container">
+    <div class="card">
+        <h2 class="title">Nuevo usuario</h2>
+        <p class="subtitle">Administra los usuarios registrados en el sistema</p>
+
+        <form class="form-grid" [formGroup]="form">
+            <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="name">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Correo electronico</mat-label>
+                <input matInput formControlName="email">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field-password">
+                <mat-label>Contraseña</mat-label>
+                <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password" />
+                <button matIconButton matSuffix (click)="clickEvent($event)" [attr.aria-label]="'Hide password'"
+                    type="button" [attr.aria-pressed]="hide()">
+                    <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-hint>Obligatoria para crear.</mat-hint>
+            </mat-form-field>
+
+            @if (errorMessage()) {
+            <div class="form-messages">
+                <p class="error-message">{{ errorMessage() }}</p>
+            </div>
+            }
+            @if (successMessage()) {
+            <div class="form-messages">
+                <p class="success-message">{{ successMessage() }}</p>
+            </div>
+            }
+        </form>
+
+        <div class="action-buttons">
+            <button mat-flat-button class="rounded-btn guardar-btn" (click)="onSubmit()"
+                [disabled]="form.invalid || loading()">
+                @if (loading()) {
+                Guardando...
+                } @else if (editingUserId()) {
+                Actualizar
+                } @else {
+                Guardar
+                }
+            </button>
+            <button mat-stroked-button class="rounded-btn limpiar-btn" (click)="onClear()"
+                [disabled]="loading()">Limpiar</button>
+        </div>
+    </div>
+
+    <!-- Users Table Section -->
+    <div class="card mt-24">
+        <h2 class="title">Usuarios registrados</h2>
+        <p class="subtitle">Datos obtenidos desde la base de datos</p>
+
+        <table mat-table [dataSource]="users()" class="users-table">
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> ID </th>
+                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef> Correo </th>
+                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-icon-button color="primary" (click)="editUser(element)" aria-label="Edit User">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteUser(element.id)" aria-label="Delete User">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+</div>
