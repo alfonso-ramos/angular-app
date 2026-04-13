@@ -16,8 +16,17 @@ export class Header {
     protected readonly auth = inject(AuthService);
     protected readonly router = inject(Router);
 
-    logout() : void{
-    this.auth.logout();
-    this.router.navigate(['/login']);
-  }
+    getInitials(name: string | undefined): string {
+        if (!name) return 'U';
+        const parts = name.trim().split(' ');
+        if (parts.length === 1) {
+            return name.substring(0, 2).toUpperCase();
+        }
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    logout(): void {
+        this.auth.logout();
+        this.router.navigate(['/login']);
+    }
 }

@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js"
 import bcrypt from "bcryptjs"
+import { analyzeStudentWithGemini } from "./gemini.service.js"
 
 const createAlumno = async ({ name, lastname, degree }) => {
   const currentYear = new Date().getFullYear()
@@ -136,10 +137,37 @@ const deleteAlumno = async (id) => {
 
 }
 
+const analyzeAlumno = async (id) => {
+  const alumno = await prisma.alumno.findUnique({
+    where: { id: Number(id) }
+  })
+
+  if (!alumno) {
+    throw new Error("Alumno no encontrado")
+  }
+
+  // Llamar a Gemini API para análisis real
+  const geminiAnalysis = await analyzeStudentWithGemini(alumno);
+  
+  return {
+    resumen: geminiAnalysis.resumen,
+    puntosFuertes: geminiAnalysis.puntosFuertes,
+    areasMejora: geminiAnalysis.areasMejora,
+    recomendaciones: geminiAnalysis.recomendaciones,
+    calificacionGeneral: geminiAnalysis.calificacionGeneral,
+    estadisticas: {
+      semestre: alumno.semester,
+      carrera: alumno.degree,
+      matricula: alumno.enrollment
+    }
+  }
+}
+
 export default {
   createAlumno,
   getAlumnos,
   getAlumnoById,
   updateAlumno,
-  deleteAlumno
+  deleteAlumno,
+  analyzeAlumno
 }

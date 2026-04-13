@@ -7,31 +7,49 @@
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Nombre</mat-label>
                 <input matInput formControlName="nombre">
+                @if (nombreErrors()) {
+                    <mat-error>{{ nombreErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Apellido</mat-label>
                 <input matInput formControlName="apellido">
+                @if (apellidoErrors()) {
+                    <mat-error>{{ apellidoErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Número de empleado</mat-label>
                 <input matInput formControlName="numeroEmpleado">
+                @if (numeroEmpleadoErrors()) {
+                    <mat-error>{{ numeroEmpleadoErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Departamento</mat-label>
                 <input matInput formControlName="departamento">
+                @if (departamentoErrors()) {
+                    <mat-error>{{ departamentoErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Especialidad</mat-label>
                 <input matInput formControlName="especialidad">
+                @if (especialidadErrors()) {
+                    <mat-error>{{ especialidadErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Correo electrónico</mat-label>
                 <input matInput formControlName="correo">
+                @if (correoErrors()) {
+                    <mat-error>{{ correoErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             @if (errorMessage()) {

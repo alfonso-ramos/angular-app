@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { enviroment } from '../../enviroment/enviroment';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { AuthService } from './auth-service';
 
 export interface Alumno {
@@ -91,6 +91,14 @@ export class AlumnosService {
     getResumenIA(id: number): Observable<any> {
         return this.http.get<any>(
             `${enviroment.apiUrl}/api/ia/resumen/${id}`,
+            { headers: this.getHeaders() }
+        );
+    }
+
+    analyzeAlumno(id: number): Observable<any> {
+        return this.http.post<any>(
+            `${enviroment.apiUrl}/api/alumnos/${id}/analyze`,
+            {},
             { headers: this.getHeaders() }
         );
     }

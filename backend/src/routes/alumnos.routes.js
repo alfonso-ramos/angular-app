@@ -246,4 +246,53 @@ router.put("/:id", verifyToken, validateAlumnoUpdate,alumnosController.updateAlu
  */
 router.delete("/:id", verifyToken, validateId,alumnosController.deleteAlumno)
 
+/**
+ * @swagger
+ * /api/alumnos/{id}/analyze:
+ *   post:
+ *     summary: Analiza el desempeño académico de un alumno con IA
+ *     tags: [Alumnos, IA]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del alumno
+ *     responses:
+ *       200:
+ *         description: Análisis generado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 analisis:
+ *                   type: object
+ *                   properties:
+ *                     resumen:
+ *                       type: string
+ *                     puntosFuertes:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     areasMejora:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     recomendaciones:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     calificacionGeneral:
+ *                       type: number
+ *       404:
+ *         description: Alumno no encontrado
+ *       401:
+ *         description: No autorizado
+ */
+router.post("/:id/analyze", verifyToken, validateId, alumnosController.analyzeAlumno)
+
 export default router

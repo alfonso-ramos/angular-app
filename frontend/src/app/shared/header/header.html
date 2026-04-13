@@ -1,12 +1,14 @@
 <mat-toolbar>
     <span>Sistema</span>
     <span class="spacer"></span>
-    
-    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-        <div class="avatar">
-        {{auth.currentUser()?.name?.substring(0,2)?.toUpperCase()}}
+
+    <div class="user-info">
+        <button matIconButton [matMenuTriggerFor]="menu" aria-label="User menu">
+            <div class="avatar">
+                {{getInitials(auth.currentUser()?.name)}}
+            </div>
+        </button>
     </div>
-    </button>
     <mat-menu #menu="matMenu">
         <button mat-menu-item disabled>
             <mat-icon>person</mat-icon>

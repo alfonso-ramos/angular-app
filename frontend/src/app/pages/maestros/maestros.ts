@@ -1,8 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +20,7 @@ export class Maestros implements OnInit {
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  submitAttempted = signal(false);
 
   maestros = signal<Maestro[]>([]);
   displayedColumns: string[] = ['id', 'nombre', 'apellido', 'numeroEmpleado', 'departamento', 'especialidad', 'correo', 'acciones'];
@@ -28,13 +29,75 @@ export class Maestros implements OnInit {
   private fb = inject(FormBuilder);
   private maestrosService = inject(MaestrosService);
 
+  private soloTextoValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+    const soloTextoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+    return soloTextoRegex.test(value) ? null : { soloTexto: true };
+  }
+
   form = this.fb.group({
-    nombre: ['', Validators.required],
-    apellido: ['', Validators.required],
+    nombre: ['', [Validators.required, this.soloTextoValidator.bind(this)]],
+    apellido: ['', [Validators.required, this.soloTextoValidator.bind(this)]],
     numeroEmpleado: ['', Validators.required],
-    departamento: ['', Validators.required],
-    especialidad: ['', Validators.required],
+    departamento: ['', [Validators.required, this.soloTextoValidator.bind(this)]],
+    especialidad: ['', [Validators.required, this.soloTextoValidator.bind(this)]],
     correo: ['', [Validators.required, Validators.email]],
+  });
+
+  nombreCtrl = this.form.controls.nombre;
+  apellidoCtrl = this.form.controls.apellido;
+  numeroEmpleadoCtrl = this.form.controls.numeroEmpleado;
+  departamentoCtrl = this.form.controls.departamento;
+  especialidadCtrl = this.form.controls.especialidad;
+  correoCtrl = this.form.controls.correo;
+
+  nombreErrors = computed(() => {
+    const ctrl = this.nombreCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El nombre es obligatorio';
+    if (ctrl.errors['soloTexto']) return 'El nombre solo debe contener letras';
+    return null;
+  });
+  apellidoErrors = computed(() => {
+    const ctrl = this.apellidoCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El apellido es obligatorio';
+    if (ctrl.errors['soloTexto']) return 'El apellido solo debe contener letras';
+    return null;
+  });
+  numeroEmpleadoErrors = computed(() => {
+    const ctrl = this.numeroEmpleadoCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El numero de empleado es obligatorio';
+    return null;
+  });
+  departamentoErrors = computed(() => {
+    const ctrl = this.departamentoCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El departamento es obligatorio';
+    if (ctrl.errors['soloTexto']) return 'El departamento solo debe contener letras';
+    return null;
+  });
+  especialidadErrors = computed(() => {
+    const ctrl = this.especialidadCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'La especialidad es obligatoria';
+    if (ctrl.errors['soloTexto']) return 'La especialidad solo debe contener letras';
+    return null;
+  });
+  correoErrors = computed(() => {
+    const ctrl = this.correoCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El correo es obligatorio';
+    if (ctrl.errors['email']) return 'El correo no es valido';
+    return null;
   });
 
   ngOnInit() {
@@ -52,6 +115,7 @@ export class Maestros implements OnInit {
   }
 
   onSubmit() {
+    this.submitAttempted.set(true);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -109,6 +173,7 @@ export class Maestros implements OnInit {
 
   finishSubmit() {
     this.loading.set(false);
+    this.submitAttempted.set(false);
     this.form.reset();
     this.editingMaestroId.set(null);
     this.loadMaestros();
@@ -148,5 +213,6 @@ export class Maestros implements OnInit {
     this.editingMaestroId.set(null);
     this.errorMessage.set(null);
     this.successMessage.set(null);
+    this.submitAttempted.set(false);
   }
 }

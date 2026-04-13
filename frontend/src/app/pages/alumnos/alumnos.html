@@ -7,31 +7,49 @@
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Nombre</mat-label>
                 <input matInput formControlName="nombre">
+                @if (nombreErrors()) {
+                    <mat-error>{{ nombreErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Apellido</mat-label>
                 <input matInput formControlName="apellido">
+                @if (apellidoErrors()) {
+                    <mat-error>{{ apellidoErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Matricula</mat-label>
                 <input matInput formControlName="matricula">
+                @if (matriculaErrors()) {
+                    <mat-error>{{ matriculaErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Carrera</mat-label>
                 <input matInput formControlName="carrera">
+                @if (carreraErrors()) {
+                    <mat-error>{{ carreraErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Cuatrimestre</mat-label>
                 <input matInput type="number" formControlName="cuatrimestre">
+                @if (cuatrimestreErrors()) {
+                    <mat-error>{{ cuatrimestreErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Correo electronico</mat-label>
                 <input matInput formControlName="correo">
+                @if (correoErrors()) {
+                    <mat-error>{{ correoErrors() }}</mat-error>
+                }
             </mat-form-field>
 
             @if (errorMessage()) {

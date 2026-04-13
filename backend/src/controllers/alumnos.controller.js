@@ -45,10 +45,20 @@ const deleteAlumno = async (req, res, next) => {
   }
 }
 
+const analyzeAlumno = async (req, res, next) => {
+  try {
+    const analisis = await alumnosService.analyzeAlumno(req.params.id)
+    res.json({ analisis })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   createAlumno,
   getAlumnos,
   getAlumnoById,
   updateAlumno,
-  deleteAlumno
+  deleteAlumno,
+  analyzeAlumno
 }

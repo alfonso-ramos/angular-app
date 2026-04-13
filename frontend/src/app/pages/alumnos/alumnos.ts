@@ -1,8 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +22,7 @@ export class Alumnos implements OnInit {
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  submitAttempted = signal(false);
 
   alumnos = signal<Alumno[]>([]);
   displayedColumns: string[] = ['id', 'nombre', 'apellido', 'matricula', 'carrera', 'cuatrimestre', 'correo', 'acciones'];
@@ -31,14 +32,77 @@ export class Alumnos implements OnInit {
   private alumnosService = inject(AlumnosService);
   private dialog = inject(MatDialog);
 
+  private soloTextoValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+    const soloTextoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+    return soloTextoRegex.test(value) ? null : { soloTexto: true };
+  }
+
   form = this.fb.group({
-    nombre: ['', Validators.required],
-    apellido: ['', Validators.required],
+    nombre: ['', [Validators.required, this.soloTextoValidator.bind(this)]],
+    apellido: ['', [Validators.required, this.soloTextoValidator.bind(this)]],
     matricula: ['', Validators.required],
-    carrera: ['', Validators.required],
+    carrera: ['', [Validators.required, this.soloTextoValidator.bind(this)]],
     cuatrimestre: [1, [Validators.required, Validators.min(1)]],
     correo: ['', [Validators.required, Validators.email]],
   });
+
+  nombreCtrl = this.form.controls.nombre;
+  apellidoCtrl = this.form.controls.apellido;
+  matriculaCtrl = this.form.controls.matricula;
+  carreraCtrl = this.form.controls.carrera;
+  cuatrimestreCtrl = this.form.controls.cuatrimestre;
+  correoCtrl = this.form.controls.correo;
+
+  nombreErrors = computed(() => {
+    const ctrl = this.nombreCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El nombre es obligatorio';
+    if (ctrl.errors['soloTexto']) return 'El nombre solo debe contener letras';
+    return null;
+  });
+  apellidoErrors = computed(() => {
+    const ctrl = this.apellidoCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El apellido es obligatorio';
+    if (ctrl.errors['soloTexto']) return 'El apellido solo debe contener letras';
+    return null;
+  });
+  matriculaErrors = computed(() => this.getFieldError(this.matriculaCtrl, 'La matricula es obligatoria'));
+  carreraErrors = computed(() => {
+    const ctrl = this.carreraCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'La carrera es obligatoria';
+    if (ctrl.errors['soloTexto']) return 'La carrera solo debe contener letras';
+    return null;
+  });
+  cuatrimestreErrors = computed(() => {
+    const ctrl = this.cuatrimestreCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El cuatrimestre es obligatorio';
+    if (ctrl.errors['min']) return 'Minimo cuatrimestre 1';
+    return null;
+  });
+  correoErrors = computed(() => {
+    const ctrl = this.correoCtrl;
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return 'El correo es obligatorio';
+    if (ctrl.errors['email']) return 'El correo no es valido';
+    return null;
+  });
+
+  private getFieldError(ctrl: any, requiredMsg: string): string | null {
+    const showErrors = this.submitAttempted() || ctrl.touched;
+    if (!showErrors || !ctrl.errors) return null;
+    if (ctrl.errors['required']) return requiredMsg;
+    return null;
+  }
 
   ngOnInit() {
     this.loadAlumnos();
@@ -55,6 +119,7 @@ export class Alumnos implements OnInit {
   }
 
   onSubmit() {
+    this.submitAttempted.set(true);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -112,6 +177,7 @@ export class Alumnos implements OnInit {
 
   finishSubmit() {
     this.loading.set(false);
+    this.submitAttempted.set(false);
     this.form.reset({ cuatrimestre: 1 });
     this.editingAlumnoId.set(null);
     this.loadAlumnos();
@@ -151,6 +217,7 @@ export class Alumnos implements OnInit {
     this.editingAlumnoId.set(null);
     this.errorMessage.set(null);
     this.successMessage.set(null);
+    this.submitAttempted.set(false);
   }
 
   openResumenIA(alumno: Alumno) {

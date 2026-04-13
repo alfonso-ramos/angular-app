@@ -13,8 +13,13 @@ export class AuthService {
   private http = inject(HttpClient);
   private base = enviroment.apiUrl;
 
-  // Signal para el usuario actual
-  currentUser = signal<{ id?: number; name: string; email: string } | null>(null);
+  // Signal para el usuario actual - inicializado desde localStorage
+  currentUser = signal<{ id?: number; name: string; email: string } | null>(this.loadUserFromStorage());
+
+  private loadUserFromStorage(): { id?: number; name: string; email: string } | null {
+    const userData = localStorage.getItem('user');
+    return userData ? JSON.parse(userData) : null;
+  }
 
   private getHeaders(): HttpHeaders {
     return new HttpHeaders({
@@ -28,7 +33,8 @@ export class AuthService {
     }).pipe(
       tap(res => {
         localStorage.setItem('token', res.token);
-        this.currentUser.set(res.user); // ← guarda el usuario
+        localStorage.setItem('user', JSON.stringify(res.user));
+        this.currentUser.set(res.user);
       })
     );
   }
@@ -41,6 +47,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUser.set(null);
   }
 
@@ -63,7 +70,7 @@ export class AuthService {
     return this.http.put(`${this.base}/api/users/${id}`, data, {
       headers: this.getHeaders()
     });
-  } 
+  }
 
   deleteUser(id: number) {
     return this.http.delete(`${this.base}/api/users/${id}`, {
