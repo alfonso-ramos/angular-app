@@ -1,5 +1,5 @@
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
 export const analyzeStudentWithGemini = async (alumno) => {
   const prompt = `Analiza el siguiente alumno universitario y proporciona un análisis detallado:
@@ -22,10 +22,11 @@ Proporciona un análisis académico en el siguiente formato JSON:
 Responde SOLO con el JSON, sin texto adicional.`;
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(GEMINI_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-goog-api-key': GEMINI_API_KEY,
       },
       body: JSON.stringify({
         contents: [
@@ -41,8 +42,14 @@ Responde SOLO con el JSON, sin texto adicional.`;
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+      const errorData = await response.json().catch(() => ({}));
+      const isQuotaError = errorData.error?.code === 429 || errorData.error?.status === 'RESOURCE_EXHAUSTED';
+      if (isQuotaError) {
+        const retrySeconds = errorData.error?.details?.find(d => d['@type']?.includes('RetryInfo'))?.retryDelay;
+        const retryMsg = retrySeconds ? ` Espera ${Math.ceil(parseInt(retrySeconds))} segundos.` : '';
+        throw new Error(`Límite de cuota excedido. Verifica tu plan en https://ai.google.dev/gemini-api/docs/rate-limits.${retryMsg}`);
+      }
+      throw new Error(`Gemini API error: ${response.status} - ${errorData.error?.message || 'Error desconocido'}`);
     }
 
     const data = await response.json();
