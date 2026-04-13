@@ -45,10 +45,30 @@ const deleteAlumno = async (req, res, next) => {
   }
 }
 
+const analyzeAlumno = async (req, res, next) => {
+  try {
+    const result = await alumnosService.analyzeAlumnoWithAI(req.params.id)
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const analyzeAllAlumnos = async (req, res, next) => {
+  try {
+    const result = await alumnosService.analyzeAllAlumnosWithAI()
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   createAlumno,
   getAlumnos,
   getAlumnoById,
   updateAlumno,
-  deleteAlumno
+  deleteAlumno,
+  analyzeAlumno,
+  analyzeAllAlumnos
 }

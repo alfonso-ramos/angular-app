@@ -246,4 +246,93 @@ router.put("/:id", verifyToken, validateAlumnoUpdate,alumnosController.updateAlu
  */
 router.delete("/:id", verifyToken, validateId,alumnosController.deleteAlumno)
 
+/**
+ * @swagger
+ * /api/alumnos/analyze:
+ *   post:
+ *     summary: Analiza todos los alumnos usando IA (Gemini)
+ *     tags: [Alumnos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Análisis de grupo generado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 analysis:
+ *                   type: string
+ *                   description: Análisis generado por la IA del grupo
+ *                 totalAlumnos:
+ *                   type: integer
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error con el servicio de IA
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post("/analyze", verifyToken, alumnosController.analyzeAllAlumnos)
+
+/**
+ * @swagger
+ * /api/alumnos/{id}/analyze:
+ *   post:
+ *     summary: Analiza un alumno usando IA (Gemini)
+ *     tags: [Alumnos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del alumno a analizar
+ *     responses:
+ *       200:
+ *         description: Análisis generado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 analysis:
+ *                   type: string
+ *                   description: Análisis generado por la IA
+ *                 alumno:
+ *                   $ref: '#/components/schemas/Alumno'
+ *       404:
+ *         description: Alumno no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error con el servicio de IA
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post("/:id/analyze", verifyToken, validateId, alumnosController.analyzeAlumno)
+
 export default router

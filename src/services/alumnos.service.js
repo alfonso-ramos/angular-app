@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js"
 import bcrypt from "bcryptjs"
+import geminiService from "./gemini.service.js"
 
 const createAlumno = async ({ name, lastname, degree }) => {
   const currentYear = new Date().getFullYear()
@@ -136,10 +137,67 @@ const deleteAlumno = async (id) => {
 
 }
 
+const analyzeAlumnoWithAI = async (id) => {
+  if (!id) {
+    throw new Error("El id del alumno es requerido")
+  }
+
+  const alumno = await prisma.alumno.findUnique({
+    where: { id: Number(id) },
+    select: {
+      id: true,
+      name: true,
+      lastname: true,
+      enrollment: true,
+      degree: true,
+      email: true,
+      semester: true
+    }
+  })
+
+  if (!alumno) {
+    throw new Error("Alumno no encontrado")
+  }
+
+  const analysis = await geminiService.analyzeAlumno(alumno)
+
+  return {
+    message: "Análisis de alumno generado con IA",
+    ...analysis
+  }
+}
+
+const analyzeAllAlumnosWithAI = async () => {
+  const alumnos = await prisma.alumno.findMany({
+    select: {
+      id: true,
+      name: true,
+      lastname: true,
+      enrollment: true,
+      degree: true,
+      email: true,
+      semester: true
+    }
+  })
+
+  if (alumnos.length === 0) {
+    throw new Error("No hay alumnos para analizar")
+  }
+
+  const analysis = await geminiService.analyzeAlumnosBatch(alumnos)
+
+  return {
+    message: "Análisis de grupo de alumnos generado con IA",
+    ...analysis
+  }
+}
+
 export default {
   createAlumno,
   getAlumnos,
   getAlumnoById,
   updateAlumno,
-  deleteAlumno
+  deleteAlumno,
+  analyzeAlumnoWithAI,
+  analyzeAllAlumnosWithAI
 }
